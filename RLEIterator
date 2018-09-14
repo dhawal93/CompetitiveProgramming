@@ -1,0 +1,31 @@
+class RLEIterator(object):
+
+    def __init__(self, A):
+        """
+        :type A: List[int]
+        """
+        self._counts = A[0::2]
+        self._vals = A[1::2]
+        self._index = 0 # the current index of the iteration
+        self._next = 0 # how many next has been called on the current value
+        self._len = len(self._vals)
+        
+
+    def next(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
+
+        remains = self._next + n
+        # Moving the counter based on how many next elements we have to skip.
+        while self._index < self._len and remains > self._counts[self._index] :
+            remains -= self._counts[self._index]
+            self._index += 1
+                
+        # already run out
+        if self._index >= self._len:
+            return -1
+        else:
+            self._next = temp
+            return self._vals[self._index]
