@@ -1,31 +1,31 @@
-class RLEIterator(object):
+class RLEIterator:
 
     def __init__(self, A):
         """
         :type A: List[int]
         """
-        self._counts = A[0::2]
-        self._vals = A[1::2]
-        self._index = 0 # the current index of the iteration
-        self._next = 0 # how many next has been called on the current value
-        self._len = len(self._vals)
-        
-
+        self.repeat_values = collections.deque([])
+        self.repeated_values = collections.deque([])
+        for i in range(len(A)):
+            if i%2 == 0 and A[i] != 0:
+                self.repeat_values.append(A[i])
+                self.repeated_values.append(A[i+1])
+        assert(len(self.repeat_values) == len(self.repeated_values))
     def next(self, n):
-        """
-        :type n: int
-        :rtype: int
-        """
-
-        remains = self._next + n
-        # Moving the counter based on how many next elements we have to skip.
-        while self._index < self._len and remains > self._counts[self._index] :
-            remains -= self._counts[self._index]
-            self._index += 1
-                
-        # already run out
-        if self._index >= self._len:
+        self.n = n
+        if not self.repeat_values:
             return -1
-        else:
-            self._next = temp
-            return self._vals[self._index]
+        while self.repeat_values and self.repeated_values:
+            repeat, value = self.repeat_values.popleft(),self.repeated_values.popleft()
+
+            if n < repeat:
+                repeat -= n
+                self.repeat_values.appendleft(repeat)
+                self.repeated_values.appendleft(value)
+                return value
+            elif n == repeat:
+                return value
+            else:
+                n -= repeat
+
+        return -1
